@@ -29,8 +29,8 @@ public:
 
 	int Hash(string key) {
 		int index = 0;
-		for (int i = 0; i < key.length; i++) { //(number ascii value * position in string[added as many as letters there are in the string]) % tableSize
-			index = (int)key[i] * (i + 1); // hope this works
+		for (unsigned int i = 0; i < key.length(); i++) { //(number ascii value * position in string[added as many as letters there are in the string]) % tableSize
+			index = (unsigned int)key[i] * (i + 1); // hope this works
 		}
 		index = index % tableSize;
 		return index;
@@ -79,9 +79,9 @@ public:
 		int index = Hash(key);
 		int temp = 0;
 
-		node* delPtr;
-		node* P1;
-		node* P2;
+		node* delPtr = NULL;
+		node* P1 = NULL;
+		node* P2 = NULL;
 
 		if (hash[index]->varName == "empty" && hash[index]->number == NULL)//there is nothing in the bucket and the user is asking for the impossible
 		{
