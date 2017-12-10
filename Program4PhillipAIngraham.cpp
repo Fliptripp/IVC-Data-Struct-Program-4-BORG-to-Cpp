@@ -73,6 +73,58 @@ public:
 
 		return -1;
 	}
+
+	int remove(string key)
+	{
+		int index = Hash(key);
+		int temp = 0;
+
+		node* delPtr;
+		node* P1;
+		node* P2;
+
+		if (hash[index]->varName == "empty" && hash[index]->number == NULL)//there is nothing in the bucket and the user is asking for the impossible
+		{
+			return -1;
+		}
+
+		else if (hash[index]->varName == key && hash[index]->next == NULL) { //there is only one thing in the bucket
+			temp = hash[index]->number;
+			hash[index]->varName = "empty";
+			hash[index]->number = NULL;
+			return temp;
+		}
+
+		else if (hash[index]->varName == key) { //First item but things after first item
+			temp = hash[index]->number;
+			delPtr = hash[index]->next;
+			hash[index] = hash[index]->next;
+			delete delPtr;
+		}
+
+		else { //The item is not in the first slot, so we must search
+			P1 = hash[index]->next;
+			P2 = hash[index];
+		}
+		while (P1 != NULL && P1->varName != key) {
+			P2 = P1;
+			P1 = P1->next;
+		}
+
+		if (P1 == NULL) //No match
+			return -1;
+		
+		else { //Item found
+			temp = P1->number;
+			delPtr = P1;
+			P1 = P1->next;
+			P2->next = P1;
+			delete delPtr;
+
+			return temp;
+		}
+			
+	}
 };
 
 
@@ -82,15 +134,17 @@ void manualBORG(HashTable a1)
 {
 	//Things done: COM(simply ignore input lol), START,
 	//This is assuming everything is perfect, hence no error checks anywhere
-	string input;
+	string input, word;
 	getline(cin, input);
 	while (input != "FINISH")
 	{
+		stringstream stream(input);
+
 		if (input == "START")
 			manualBORG(a1);
 
 		else if (input[0] == 'V' && input[1] == 'A' && input[2] == 'R') {
-			//place VAR here
+			
 		}
 
 		else if (input[0] == 'P' && input[1] == 'R' && input[2] == 'I' && input[3] == 'N' && input[4] == 'T') {
@@ -101,6 +155,7 @@ void manualBORG(HashTable a1)
 		}
 		cin >> input;
 	}
+	return;
 }
 
 void fileBORG(HashTable a1)
