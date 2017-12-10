@@ -129,21 +129,22 @@ public:
 
 
 //Recursive functions
-//
+
+
 void manualBORG(HashTable a1) 
 {
 	//Things done: COM(simply ignore input lol)
-	//Things no tested: START, VAR, PRINT
+	//Things not tested: START, VAR, PRINT, reassigning values in the hash table
 	//This is assuming everything is perfect, hence no error checks anywhere
 	string input, word, varName, op = "empty";
 	int num, num2;
 	getline(cin, input);
 	while (input != "FINISH")
 	{
-		if (input == "START")
+		if (input == "START") //START
 			manualBORG(a1);
 
-		else if (input[0] == 'V' && input[1] == 'A' && input[2] == 'R') {
+		else if (input[0] == 'V' && input[1] == 'A' && input[2] == 'R') { //VAR
 			stringstream stream(input);
 			while (getline(stream, word, ' ')) {
 				if (isdigit(word[0]) && word != "VAR" && word != "="){
@@ -158,25 +159,27 @@ void manualBORG(HashTable a1)
 			a1.addItems(varName, num);
 		}
 
-		else if (input[0] == 'P' && input[1] == 'R' && input[2] == 'I' && input[3] == 'N' && input[4] == 'T') {
+		else if (input[0] == 'P' && input[1] == 'R' && input[2] == 'I' && input[3] == 'N' && input[4] == 'T') { //PRINT
 			stringstream stream(input);
 			while (getline(stream, word, ' ')) {
-				if (word != "PRINT" && (word != "*" || word != "+" || word != "-" || word != "/" || word != "%" || word != "^")) {
+				if (isdigit(word[0]) && word != "PRINT" && (word != "*" || word != "+" || word != "-" || word != "/" || word != "%" || word != "^")) {
+					stringstream ss;
+					ss << word;
+					ss >> num2;
+				}
+				else if (word != "PRINT" && (word != "*" || word != "+" || word != "-" || word != "/" || word != "%" || word != "^")) {
 					varName = word;
 				}
 				else if (word == "*" || word == "+" || word == "-" || word == "/" || word == "%" || word == "^") {
 					op = word;
 				}
-				else if (isdigit(word[0]) && word != "PRINT" && (word != "*" || word != "+" || word != "-" || word != "/" || word != "%" || word != "^")) {
-					stringstream ss;
-					ss << word;
-					ss >> num2;
-				}
 			}
 			num = a1.lookUp(varName, num);
 
-			if (num == -1) //In a perfect world this should never be hit
+			if (num == -1) { //Nothing is found
+				cout << varName << " IS UNDEFINED\n";
 				break;
+			}
 
 			if (op == "+") {
 				num = num + num2;
@@ -203,10 +206,36 @@ void manualBORG(HashTable a1)
 			op = "empty";
 		}
 
-		else {
-			//place increments and variable modifiers here
+		else { //Increment, decrement, and reassigning values
+			stringstream stream(input);
+			while (getline(stream, word, ' ')) {
+				if (word != "--" || word != "++" || word != "=")
+					varName = word;
+				else if (word == "--" || word == "++" || word == "=")
+					op = word;
+				else if (isdigit(word[0]) && (word != "--" || word != "++" || word != "=")) {
+					stringstream ss;
+					ss << word;
+					ss >> num2;
+				}
+			}
+
+			num = a1.remove(varName);
+			if (num == -1) { //Nothing is found
+				cout << varName << " IS UNDEFINED\n";
+				break;
+			}
+
+			else if (op == "=")
+				num = num2;
+			else if (op == "++")
+				num++;
+			else if (op == "--")
+				num--;
+
+			a1.addItems(varName, num);
 		}
-		cin >> input;
+		getline(cin, input);
 	}
 	return;
 }
