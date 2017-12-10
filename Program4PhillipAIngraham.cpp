@@ -132,26 +132,79 @@ public:
 //
 void manualBORG(HashTable a1) 
 {
-	//Things done: COM(simply ignore input lol), START,
+	//Things done: COM(simply ignore input lol)
+	//Things no tested: START, VAR, PRINT
 	//This is assuming everything is perfect, hence no error checks anywhere
-	string input, word;
+	string input, word, varName, op = "empty";
+	int num, num2;
 	getline(cin, input);
 	while (input != "FINISH")
 	{
-		stringstream stream(input);
-
 		if (input == "START")
 			manualBORG(a1);
 
 		else if (input[0] == 'V' && input[1] == 'A' && input[2] == 'R') {
-			
+			stringstream stream(input);
+			while (getline(stream, word, ' ')) {
+				if (isdigit(word[0]) && word != "VAR" && word != "="){
+					stringstream ss;
+					ss << word;
+					ss >> num;
+				}
+				else if (word != "VAR" && word != "=") {
+					varName = word;
+				}
+			}
+			a1.addItems(varName, num);
 		}
 
 		else if (input[0] == 'P' && input[1] == 'R' && input[2] == 'I' && input[3] == 'N' && input[4] == 'T') {
-			//Place PRINT here
+			stringstream stream(input);
+			while (getline(stream, word, ' ')) {
+				if (word != "PRINT" && (word != "*" || word != "+" || word != "-" || word != "/" || word != "%" || word != "^")) {
+					varName = word;
+				}
+				else if (word == "*" || word == "+" || word == "-" || word == "/" || word == "%" || word == "^") {
+					op = word;
+				}
+				else if (isdigit(word[0]) && word != "PRINT" && (word != "*" || word != "+" || word != "-" || word != "/" || word != "%" || word != "^")) {
+					stringstream ss;
+					ss << word;
+					ss >> num2;
+				}
+			}
+			num = a1.lookUp(varName, num);
+
+			if (num == -1) //In a perfect world this should never be hit
+				break;
+
+			if (op == "+") {
+				num = num + num2;
+			}
+			else if (op == "-") {
+				num = num - num2;
+			}
+			else if (op == "*") {
+				num = num * num2;
+			}
+			else if (op == "/") {
+				num = num / num2;
+			}
+			else if (op == "%") {
+				num = num % num2;
+			}
+			else if (op == "^") {
+				num = num ^ num2;
+			}
+			cout << varName;
+			if (op != "empty")
+				cout << " " << op << " " << num2;
+			cout << "IS " << num;
+			op = "empty";
 		}
+
 		else {
-			//place increments here
+			//place increments and variable modifiers here
 		}
 		cin >> input;
 	}
@@ -176,14 +229,14 @@ int main()
 	do {
 		if (choice == 1)
 		{
-			cout << "\nManual Input Selected. Begin.\n";
-			string inputFalse;
-			cin >> inputFalse; //Should be START
 			fileBORG(a1);
 		}
 
 		else if (choice == 2)
 		{
+			cout << "\nManual Input Selected. Begin.\n";
+			string inputFalse;
+			cin >> inputFalse; //Should be START
 			manualBORG(a1);
 		}
 	} while (choice != 1 && choice != 2);
