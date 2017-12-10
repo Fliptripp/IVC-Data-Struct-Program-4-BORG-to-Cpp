@@ -1,5 +1,6 @@
 #include <iostream>
 #include <fstream>
+#include <string>
 using namespace std;
 
 
@@ -21,10 +22,21 @@ private:
 
 public:
 	HashTable() {
-		
+		for (int i = 0; i < tableSize; i++) {
+			hash[i] = new node;
+			hash[i]->number = NULL;
+			hash[i]->varName = "empty";
+			hash[i]->next = NULL;
+		}
 	}
 
 	int Hash(string key) {
+		int index = 0;
+		for (int i = 0; i < key.length; i++) {
+			index = (int)key[i] * (i + 1);
+		}
+		index = index % tableSize;
+		return index;
 
 	}
 
