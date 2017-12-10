@@ -1,3 +1,1 @@
-#IVCDataStructProgram4
-by Phillip A Ingraham
-pls no judge
+A program for the IVC Data Structures class. This uses a hash table to control different variables that will be entered by the BORG program. First github repository as well.
