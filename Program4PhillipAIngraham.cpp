@@ -58,14 +58,14 @@ public:
 		}
 	}
 
-	int lookUp(string key, int num)
+	int lookUp(string key)
 	{
 		int index = Hash(key);
 
 		node* temp = hash[index];
-		while (temp->number != NULL && hash[index]->varName == "empty"){
-			if (temp->number == num && temp->varName == key)
-				return num;
+		while (temp->number != NULL && temp->varName != "empty"){
+			if (temp->varName == key)
+				return temp->number;
 
 			else
 				temp = temp->next;
@@ -138,6 +138,7 @@ void manualBORG(HashTable a1)
 	//This is assuming everything is perfect, hence no error checks anywhere
 	string input, word, varName, op = "empty";
 	int num, num2;
+	cin.ignore();
 	getline(cin, input);
 	while (input != "FINISH")
 	{
@@ -174,39 +175,39 @@ void manualBORG(HashTable a1)
 					op = word;
 				}
 			}
-			num = a1.lookUp(varName, num);
+			num = a1.lookUp(varName);
 
 			if (num == -1) { //Nothing is found
 				cout << varName << " IS UNDEFINED\n";
-				break;
 			}
-
-			if (op == "+") {
-				num = num + num2;
+			else {
+				if (op == "+") {
+					num = num + num2;
+				}
+				else if (op == "-") {
+					num = num - num2;
+				}
+				else if (op == "*") {
+					num = num * num2;
+				}
+				else if (op == "/") {
+					num = num / num2;
+				}
+				else if (op == "%") {
+					num = num % num2;
+				}
+				else if (op == "^") {
+					num = num ^ num2;
+				}
+				cout << varName;
+				if (op != "empty")
+					cout << " " << op << " " << num2;
+				cout << " IS " << num << endl;
 			}
-			else if (op == "-") {
-				num = num - num2;
-			}
-			else if (op == "*") {
-				num = num * num2;
-			}
-			else if (op == "/") {
-				num = num / num2;
-			}
-			else if (op == "%") {
-				num = num % num2;
-			}
-			else if (op == "^") {
-				num = num ^ num2;
-			}
-			cout << varName;
-			if (op != "empty")
-				cout << " " << op << " " << num2;
-			cout << "IS " << num;
 			op = "empty";
 		}
 
-		else { //Increment, decrement, and reassigning values
+		else if (input[0] != 'C' && input [1] != 'O' && input [2] != 'M' && input != "FINISH"){ //Increment, decrement, and reassigning values
 			stringstream stream(input);
 			while (getline(stream, word, ' ')) {
 				if (word != "--" || word != "++" || word != "=")
@@ -223,17 +224,17 @@ void manualBORG(HashTable a1)
 			num = a1.remove(varName);
 			if (num == -1) { //Nothing is found
 				cout << varName << " IS UNDEFINED\n";
-				break;
 			}
-
-			else if (op == "=")
-				num = num2;
-			else if (op == "++")
-				num++;
-			else if (op == "--")
-				num--;
-
-			a1.addItems(varName, num);
+			else {
+				if (op == "=")
+					num = num2;
+				else if (op == "++")
+					num++;
+				else if (op == "--")
+					num--;
+				a1.addItems(varName, num);
+				}
+			op = "empty";
 		}
 		getline(cin, input);
 	}
