@@ -136,105 +136,112 @@ void manualBORG(HashTable a1)
 	//Things done: COM(simply ignore input lol)
 	//Things not tested: START, VAR, PRINT, reassigning values in the hash table
 	//This is assuming everything is perfect, hence no error checks anywhere
-	string input, word, varName, op = "empty";
+	string input = "empty", word, word2, varName, op = "empty";
 	int num, num2;
 	cin.ignore();
 	getline(cin, input);
 	while (input != "FINISH")
 	{
-		if (input == "START") //START
-			manualBORG(a1);
-
-		else if (input[0] == 'V' && input[1] == 'A' && input[2] == 'R') { //VAR
-			stringstream stream(input);
-			while (getline(stream, word, ' ')) {
-				if (isdigit(word[0]) && word != "VAR" && word != "="){
-					stringstream ss;
-					ss << word;
-					ss >> num;
-				}
-				else if (word != "VAR" && word != "=") {
-					varName = word;
-				}
+		stringstream stream(input);
+		while (getline(stream, word, ' ')) {
+			if (input == "FINISH")
+				break;
+			//START Recursion
+			else if (input == "START") {
+				manualBORG(a1);
+				break;
 			}
-			a1.addItems(varName, num);
-		}
-
-		else if (input[0] == 'P' && input[1] == 'R' && input[2] == 'I' && input[3] == 'N' && input[4] == 'T') { //PRINT
-			stringstream stream(input);
-			while (getline(stream, word, ' ')) {
-				if (isdigit(word[0]) && word != "PRINT" && (word != "*" || word != "+" || word != "-" || word != "/" || word != "%" || word != "^")) {
-					stringstream ss;
-					ss << word;
-					ss >> num2;
+			//COM
+			else if (input == "COM")
+				break;
+			//VAR
+			else if (input == "VAR") {
+				stringstream stream(input);
+				while (getline(stream, word2, ' ')) {
+					if (isdigit(word2[0])) {
+						stringstream ss;
+						ss << word2;
+						ss >> num;
+					}
+					else if (word2 != "VAR" && word2 != "=")
+						varName = word2;
 				}
-				else if (word != "PRINT" && (word != "*" || word != "+" || word != "-" || word != "/" || word != "%" || word != "^")) {
-					varName = word;
-				}
-				else if (word == "*" || word == "+" || word == "-" || word == "/" || word == "%" || word == "^") {
-					op = word;
-				}
-			}
-			num = a1.lookUp(varName);
-
-			if (num == -1) { //Nothing is found
-				cout << varName << " IS UNDEFINED\n";
-			}
-			else {
-				if (op == "+") {
-					num = num + num2;
-				}
-				else if (op == "-") {
-					num = num - num2;
-				}
-				else if (op == "*") {
-					num = num * num2;
-				}
-				else if (op == "/") {
-					num = num / num2;
-				}
-				else if (op == "%") {
-					num = num % num2;
-				}
-				else if (op == "^") {
-					num = num ^ num2;
-				}
-				cout << varName;
-				if (op != "empty")
-					cout << " " << op << " " << num2;
-				cout << " IS " << num << endl;
-			}
-			op = "empty";
-		}
-
-		else if (input[0] != 'C' && input [1] != 'O' && input [2] != 'M' && input != "FINISH"){ //Increment, decrement, and reassigning values
-			stringstream stream(input);
-			while (getline(stream, word, ' ')) {
-				if (word != "--" || word != "++" || word != "=")
-					varName = word;
-				else if (word == "--" || word == "++" || word == "=")
-					op = word;
-				else if (isdigit(word[0]) && (word != "--" || word != "++" || word != "=")) {
-					stringstream ss;
-					ss << word;
-					ss >> num2;
-				}
-			}
-
-			num = a1.remove(varName);
-			if (num == -1) { //Nothing is found
-				cout << varName << " IS UNDEFINED\n";
-			}
-			else {
-				if (op == "=")
-					num = num2;
-				else if (op == "++")
-					num++;
-				else if (op == "--")
-					num--;
 				a1.addItems(varName, num);
+				break;
+			}
+			//Print
+			else if (input == "PRINT") {
+				stringstream stream(input);
+				while (getline(stream, word2, ' ')) {
+					if (isdigit(word2[0]) && word2 != "PRINT" && (word2 != "*" || word2 != "+" || word2 != "-" || word2 != "/" || word2 != "%" || word2 != "^")) {
+						stringstream ss;
+						ss << word2;
+						ss >> num2;
+					}
+					else if (word2 != "PRINT" && word2 != "*" && word2 != "+" && word2 != "-" && word2 != "/" && word2 != "%" && word2 != "^")
+						varName = word2;
+					else 
+						op = word2;
 				}
-			op = "empty";
+				num = a1.lookUp(varName);
+
+				if (num == -1)
+					cout << varName << " IS UNDEFINED\n";
+				else {
+					if (op == "+") {
+						num = num + num2;
+					}
+					else if (op == "-") {
+						num = num - num2;
+					}
+					else if (op == "*") {
+						num = num * num2;
+					}
+					else if (op == "/") {
+						num = num / num2;
+					}
+					else if (op == "%") {
+						num = num % num2;
+					}
+					else if (op == "^") {
+						num = num ^ num2;
+					}
+					cout << varName;
+					if (op != "empty")
+						cout << " " << op << " " << num2;
+					cout << " IS " << num << endl;
+				}
+				op = "empty";
+			}
+			//Increment, Decrement, and Reassigning Values
+			else {
+				stringstream stream(input);
+				while (getline(stream, word2, ' ')) {
+					if (word2 != "--" || word2 != "++" || word2 != "=")
+						varName = word2;
+					else if (word2 == "--" || word2 == "++" || word2 == "=")
+						op = word;
+					else if (isdigit(word2[0]) && (word2 != "--" || word2 != "++" || word2 != "=")) {
+						stringstream ss;
+						ss << word2;
+						ss >> num2;
+					}
+				}
+				num = a1.remove(varName);
+				if (num == -1) { //Nothing is found
+					cout << varName << " IS UNDEFINED\n";
+				}
+				else {
+					if (op == "=")
+						num = num2;
+					else if (op == "++")
+						num++;
+					else if (op == "--")
+						num--;
+					a1.addItems(varName, num);
+				}
+				op = "empty";
+			}
 		}
 		getline(cin, input);
 	}
@@ -265,8 +272,8 @@ int main()
 		else if (choice == 2)
 		{
 			cout << "\nManual Input Selected. Begin.\n";
-			string inputFalse;
-			cin >> inputFalse; //Should be START
+			string fake;
+			cin >> fake;
 			manualBORG(a1);
 		}
 	} while (choice != 1 && choice != 2);
