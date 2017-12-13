@@ -144,18 +144,18 @@ void manualBORG(HashTable a1)
 	{
 		stringstream stream(input);
 		while (getline(stream, word, ' ')) {
-			if (input == "FINISH")
+			if (word == "FINISH")
 				break;
 			//START Recursion
-			else if (input == "START") {
+			else if (word == "START") {
 				manualBORG(a1);
 				break;
 			}
 			//COM
-			else if (input == "COM")
+			else if (word == "COM")
 				break;
 			//VAR
-			else if (input == "VAR") {
+			else if (word == "VAR") {
 				stringstream stream(input);
 				while (getline(stream, word2, ' ')) {
 					if (isdigit(word2[0])) {
@@ -170,7 +170,7 @@ void manualBORG(HashTable a1)
 				break;
 			}
 			//Print
-			else if (input == "PRINT") {
+			else if (word == "PRINT") {
 				stringstream stream(input);
 				while (getline(stream, word2, ' ')) {
 					if (isdigit(word2[0]) && word2 != "PRINT" && (word2 != "*" || word2 != "+" || word2 != "-" || word2 != "/" || word2 != "%" || word2 != "^")) {
@@ -180,7 +180,7 @@ void manualBORG(HashTable a1)
 					}
 					else if (word2 != "PRINT" && word2 != "*" && word2 != "+" && word2 != "-" && word2 != "/" && word2 != "%" && word2 != "^")
 						varName = word2;
-					else 
+					else if (word2 == "+" && word2 == "-" && word2 == "/" && word2 == "%" && word2 == "^")
 						op = word2;
 				}
 				num = a1.lookUp(varName);
@@ -217,10 +217,10 @@ void manualBORG(HashTable a1)
 			else {
 				stringstream stream(input);
 				while (getline(stream, word2, ' ')) {
-					if (word2 != "--" || word2 != "++" || word2 != "=")
+					if (word2 != "--" && word2 != "++" && word2 != "=")
 						varName = word2;
 					else if (word2 == "--" || word2 == "++" || word2 == "=")
-						op = word;
+						op = word2;
 					else if (isdigit(word2[0]) && (word2 != "--" || word2 != "++" || word2 != "=")) {
 						stringstream ss;
 						ss << word2;
@@ -241,6 +241,7 @@ void manualBORG(HashTable a1)
 					a1.addItems(varName, num);
 				}
 				op = "empty";
+				break;
 			}
 		}
 		getline(cin, input);
