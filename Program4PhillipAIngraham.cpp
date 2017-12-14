@@ -2,6 +2,7 @@
 #include <fstream>
 #include <string>
 #include <sstream>
+#include <math.h>
 using namespace std;
 
 class HashTable
@@ -125,20 +126,24 @@ public:
 		}
 			
 	}
+
 };
+
+//Linked Based Queue
+
 
 
 //Recursive functions
-
-
-void manualBORG(HashTable a1) 
+void manualBORG(HashTable a1, int n) 
 {
-	//Things done: COM(simply ignore input lol)
-	//Things not tested: START, VAR, PRINT, reassigning values in the hash table
+	//Things done: COM(simply ignore input lol), reassigning values in the hash table, VAR, PRINT
+	//Things not tested: START
 	//This is assuming everything is perfect, hence no error checks anywhere
 	string input = "empty", word, word2, varName, op = "empty";
 	int num, num2;
-	cin.ignore();
+	if (n == 0)
+		cin.ignore();
+
 	getline(cin, input);
 	while (input != "FINISH")
 	{
@@ -148,7 +153,7 @@ void manualBORG(HashTable a1)
 				break;
 			//START Recursion
 			else if (word == "START") {
-				manualBORG(a1);
+				manualBORG(a1, n+1);
 				break;
 			}
 			//COM
@@ -180,7 +185,7 @@ void manualBORG(HashTable a1)
 					}
 					else if (word2 != "PRINT" && word2 != "*" && word2 != "+" && word2 != "-" && word2 != "/" && word2 != "%" && word2 != "^")
 						varName = word2;
-					else if (word2 == "+" && word2 == "-" && word2 == "/" && word2 == "%" && word2 == "^")
+					else if (word2 == "*" || word2 == "+" || word2 == "-" || word2 == "/" || word2 == "%" || word2 == "^")
 						op = word2;
 				}
 				num = a1.lookUp(varName);
@@ -204,7 +209,7 @@ void manualBORG(HashTable a1)
 						num = num % num2;
 					}
 					else if (op == "^") {
-						num = num ^ num2;
+						num = pow(num, num2);
 					}
 					cout << varName;
 					if (op != "empty")
@@ -212,6 +217,7 @@ void manualBORG(HashTable a1)
 					cout << " IS " << num << endl;
 				}
 				op = "empty";
+				break;
 			}
 			//Increment, Decrement, and Reassigning Values
 			else {
@@ -256,7 +262,7 @@ void fileBORG(HashTable a1)
 
 int main()
 {
-	HashTable a1;
+	HashTable a2;
 	int choice = 0;
 	cout << "Program 4 BORG\n";
 	cout << "-----------------------------------\n";
@@ -267,7 +273,7 @@ int main()
 	do {
 		if (choice == 1)
 		{
-			fileBORG(a1);
+			fileBORG(a2);
 		}
 
 		else if (choice == 2)
@@ -275,7 +281,7 @@ int main()
 			cout << "\nManual Input Selected. Begin.\n";
 			string fake;
 			cin >> fake;
-			manualBORG(a1);
+			manualBORG(a2, 0);
 		}
 	} while (choice != 1 && choice != 2);
 
