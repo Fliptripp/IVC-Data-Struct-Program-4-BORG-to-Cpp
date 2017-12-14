@@ -129,22 +129,65 @@ public:
 
 };
 
-//Linked Based Queue
+//Linked Based Queue For Input
+struct nodeQueue {
+	string input;
+	nodeQueue *next;
+}*front = NULL, *rear = NULL;
 
+void enQueue(string input)
+{
+	nodeQueue *temp = new nodeQueue;
+	temp->input = input;
+	temp->next = NULL;
+	if (front == NULL && rear == NULL) {
+		front = rear = temp;
+		return;
+	}
+	rear->next = temp;
+	rear = temp;
+}
+
+string deQueue() {
+	nodeQueue *temp = new nodeQueue;
+	string temparoni = "empty";
+	if (front == rear) {
+		temparoni = front->input;
+		front = rear = NULL;
+		return temparoni;
+	}
+	else {
+		temparoni = front->input;
+		front = front->next;
+		return temparoni;
+	}
+}
+
+bool isEmpty() {
+	if (front == NULL)
+		return true;
+	else
+		return false;
+}
 
 
 //Recursive functions
 void manualBORG(HashTable a1, int n) 
 {
 	//Things done: COM(simply ignore input lol), reassigning values in the hash table, VAR, PRINT
-	//Things not tested: START
+	//Things not tested: START, the queue
 	//This is assuming everything is perfect, hence no error checks anywhere
 	string input = "empty", word, word2, varName, op = "empty";
 	int num, num2;
 	if (n == 0)
 		cin.ignore();
 
-	getline(cin, input);
+		//Things to do:
+		//Put this in queue and add pop to the end of while loop
+		//Make a new queue in start to add the inputs needed to be removed once the nested scope is finished
+		getline(cin, input);
+
+		input = deQueue();
 	while (input != "FINISH")
 	{
 		stringstream stream(input);
@@ -260,6 +303,11 @@ void fileBORG(HashTable a1)
 
 }
 
+void outputPrint()
+{
+
+}
+
 int main()
 {
 	HashTable a2;
@@ -268,6 +316,7 @@ int main()
 	cout << "-----------------------------------\n";
 	cout << "1. Insert file with BORG commands\n";
 	cout << "2. Manually insert BORG commands through console\n";
+	cout << "-----------------------------------\n";
 	cout << "Choice: ";
 	cin >> choice;
 	do {
@@ -278,9 +327,7 @@ int main()
 
 		else if (choice == 2)
 		{
-			cout << "\nManual Input Selected. Begin.\n";
-			string fake;
-			cin >> fake;
+			cout << "\nManual Input Selected. Once Finished, type -1 to stop.\nBegin.\n";
 			manualBORG(a2, 0);
 		}
 	} while (choice != 1 && choice != 2);
