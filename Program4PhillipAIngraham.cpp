@@ -129,49 +129,7 @@ public:
 
 };
 
-//Linked Based Queue For Input
-struct nodeQueue {
-	string input;
-	nodeQueue *next;
-}*front = NULL, *rear = NULL;
 
-void enQueue(string input)
-{
-	nodeQueue *temp = new nodeQueue;
-	temp->input = input;
-	temp->next = NULL;
-	if (front == NULL && rear == NULL) {
-		front = rear = temp;
-		return;
-	}
-	rear->next = temp;
-	rear = temp;
-}
-
-string deQueue() {
-	nodeQueue *temp = new nodeQueue;
-	string temparoni = "empty";
-	if (front == rear) {
-		temparoni = front->input;
-		front = rear = NULL;
-		return temparoni;
-	}
-	else {
-		temparoni = front->input;
-		front = front->next;
-		return temparoni;
-	}
-}
-
-bool isEmpty() {
-	if (front == NULL)
-		return true;
-	else
-		return false;
-}
-
-
-//Recursive functions
 void manualBORG(HashTable a1, int n) 
 {
 	//Things done: COM(simply ignore input lol), reassigning values in the hash table, VAR, PRINT
@@ -182,14 +140,11 @@ void manualBORG(HashTable a1, int n)
 	if (n == 0)
 		cin.ignore();
 
-		//Things to do:
-		//Put this in queue and add pop to the end of while loop
-		//Make a new queue in start to add the inputs needed to be removed once the nested scope is finished
 		getline(cin, input);
 
-		input = deQueue();
 	while (input != "FINISH")
 	{
+		
 		stringstream stream(input);
 		while (getline(stream, word, ' ')) {
 			if (word == "FINISH")
@@ -298,20 +253,129 @@ void manualBORG(HashTable a1, int n)
 	return;
 }
 
-void fileBORG(HashTable a1)
+void fileBORG(HashTable a1, int n)
 {
+	//Things done: COM(simply ignore input lol), reassigning values in the hash table, VAR, PRINT
+	//Things not tested: START, the queue
+	//This is assuming everything is perfect, hence no error checks anywhere
+	string input = "empty", word, word2, varName, op = "empty";
+	int num, num2;
+	ifstream myfile("BORG2.txt");
 
-}
+	if (myfile.is_open()) {
+		while (getline(myfile,input)){
+			stringstream stream(input);
+			while (getline(stream, word, ' ')) {
+			if (word == "FINISH")
+				break;
+				//START Recursion
+				else if (word == "START") 
+					break;
+				//COM
+				else if (word == "COM")
+					break;
+				//VAR
+				else if (word == "VAR") {
+					stringstream stream(input);
+					while (getline(stream, word2, ' ')) {
+						if (isdigit(word2[0])) {
+							stringstream ss;
+							ss << word2;
+							ss >> num;
+						}
+						else if (word2 != "VAR" && word2 != "=")
+							varName = word2;
+					}
+					a1.addItems(varName, num);
+					break;
+				}
+				//Print
+				else if (word == "PRINT") {
+					stringstream stream(input);
+					while (getline(stream, word2, ' ')) {
+						if (isdigit(word2[0]) && word2 != "PRINT" && (word2 != "*" || word2 != "+" || word2 != "-" || word2 != "/" || word2 != "%" || word2 != "^")) {
+							stringstream ss;
+							ss << word2;
+							ss >> num2;
+						}
+						else if (word2 != "PRINT" && word2 != "*" && word2 != "+" && word2 != "-" && word2 != "/" && word2 != "%" && word2 != "^")
+							varName = word2;
+						else if (word2 == "*" || word2 == "+" || word2 == "-" || word2 == "/" || word2 == "%" || word2 == "^")
+							op = word2;
+					}
+					num = a1.lookUp(varName);
 
-void outputPrint()
-{
-
+					if (num == -1)
+						cout << varName << " IS UNDEFINED\n";
+					else {
+						if (op == "+") {
+							num = num + num2;
+						}
+						else if (op == "-") {
+							num = num - num2;
+						}
+						else if (op == "*") {
+							num = num * num2;
+						}
+						else if (op == "/") {
+							num = num / num2;
+						}
+						else if (op == "%") {
+							num = num % num2;
+						}
+						else if (op == "^") {
+							num = pow(num, num2);
+						}
+						cout << varName;
+						if (op != "empty")
+							cout << " " << op << " " << num2;
+						cout << " IS " << num << endl;
+					}
+					op = "empty";
+					break;
+				}
+				//Increment, Decrement, and Reassigning Values
+				else {
+					stringstream stream(input);
+					while (getline(stream, word2, ' ')) {
+						if (word2 != "--" && word2 != "++" && word2 != "=")
+							varName = word2;
+						else if (word2 == "--" || word2 == "++" || word2 == "=")
+							op = word2;
+						else if (isdigit(word2[0]) && (word2 != "--" || word2 != "++" || word2 != "=")) {
+							stringstream ss;
+							ss << word2;
+							ss >> num2;
+						}
+					}
+					num = a1.remove(varName);
+					if (num == -1) { //Nothing is found
+						cout << varName << " IS UNDEFINED\n";
+					}
+					else {
+						if (op == "=")
+							num = num2;
+						else if (op == "++")
+							num++;
+						else if (op == "--")
+							num--;
+						a1.addItems(varName, num);
+					}
+					op = "empty";
+					break;
+				}
+			}
+		}
+		myfile.close();
+	}
+	return;
 }
 
 int main()
 {
 	HashTable a2;
 	int choice = 0;
+
 	cout << "Program 4 BORG\n";
 	cout << "-----------------------------------\n";
 	cout << "1. Insert file with BORG commands\n";
@@ -322,7 +386,8 @@ int main()
 	do {
 		if (choice == 1)
 		{
-			fileBORG(a2);
+			cout << "\nFile Input Selected.\n";
+			fileBORG(a2, 0);
 		}
 
 		else if (choice == 2)
